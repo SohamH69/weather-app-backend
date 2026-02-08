@@ -10,6 +10,10 @@ app.get("/weather", async (req, res) => {
   const { lat, lon } = req.query;
   const apiKey = process.env.OPENWEATHER_KEY;
 
+  if (!apiKey) {
+    return res.status(500).json({ error: "API key not configured" });
+  }
+
   try {
     //Reverse geocode
     const geoRes = await fetch(
@@ -34,4 +38,8 @@ app.get("/weather", async (req, res) => {
     console.error("Error fetching weather data:", error);
     res.status(500).json({ error: "Failed to fetch weather data" });
   }
+});
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
