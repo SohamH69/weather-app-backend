@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3000;
 // Enable CORS for all routes
 app.use(
   cors({
-    origin: "https://sohamh69.github.io/weather-app/",
+    origin: "https://sohamh69.github.io",
   }),
 );
 
