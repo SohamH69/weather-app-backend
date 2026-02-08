@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 3000;
 //Endpoint to fetch weather securely
 app.get("/weather", async (req, res) => {
   const { lat, lon } = req.query;
-  const apiKey = process.env.OPENWEATHER_API_KEY;
+  const apiKey = process.env.OPENWEATHER_KEY;
 
   try {
     //Reverse geocode
