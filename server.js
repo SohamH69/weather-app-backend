@@ -6,7 +6,7 @@ const PORT = process.env.PORT || 3000;
 
 //Endpoint to fetch weather securely
 app.get("/weather", async (req, res) => {
-  const { lat, lon } = req.query;
+  const { lat, lon, city } = req.query;
   const apiKey = process.env.OPENWEATHER_KEY;
 
   if (!apiKey) {
@@ -14,24 +14,25 @@ app.get("/weather", async (req, res) => {
   }
 
   try {
-    //Reverse geocode
-    const geoRes = await fetch(
-      `https://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${apiKey}`,
-    );
-    const geoData = await geoRes.json();
-    const city = geoData[0].name;
+    let weatherUrl;
+    if (lat && lon) {
+      weatherUrl = `https://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${apiKey}`;
+    } else if (city) {
+      weatherUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`;
+    } else {
+      return res
+        .status(400)
+        .json({ error: "Please provide either lat/lon or city" });
+    }
 
-    //Fetch weather
-    const weatherRes = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`,
-    );
-    const weatherData = await weatherRes.json();
+    const response = await fetch(weatherUrl);
+    const data = await response.json();
 
     res.json({
-      city,
-      temp: weatherData.main.temp,
-      description: weatherData.weather[0].description,
-      icon: weatherData.weather[0].icon,
+      city: data.name || data[0].name,
+      temp: data.main.temp,
+      description: data.weather[0].description,
+      icon: data.weather[0].icon,
     });
   } catch (error) {
     console.error("Error fetching weather data:", error);
