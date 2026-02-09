@@ -26,6 +26,9 @@ app.get("/weather", async (req, res) => {
     if (!resolvedCity && lat && lon) {
       const geoRes = await fetch(
         `https://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${apiKey}`,
+        console.log(
+          `Backend Fetching city name for coordinates: ${lat}, ${lon}`,
+        ),
       );
       const geoData = await geoRes.json();
       resolvedCity = geoData[0]?.name;
@@ -40,6 +43,7 @@ app.get("/weather", async (req, res) => {
     //Fetch weather by resolved city name
     const weatherRes = await fetch(
       `https://api.openweathermap.org/data/2.5/weather?q=${resolvedCity}&units=metric&appid=${apiKey}`,
+      console.log(`BackendFetching weather for city: ${resolvedCity}`),
     );
     const data = await weatherRes.json();
     res.json({
